@@ -3,7 +3,6 @@
 ## Code issues
 
 - Encje w `AppCore/Entities` mają kilka właściwości nienullowalnych bez wartości domyślnych, co generuje ostrzeżenia nullability podczas `dotnet build`.
-- `MemoryVehicleRepository.FindByNumberPlate` może zwracać `null`, ale sygnatura metody nadal jest nienullowalna.
 
 ## Environment issues
 
