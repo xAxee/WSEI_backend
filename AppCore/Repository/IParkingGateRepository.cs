@@ -4,5 +4,5 @@ namespace AppCore.Repository;
 
 public interface IParkingGateRepository : IGenericRepositoryAsync<ParkingGate>
 {
-    ParkingGate GetParkingGateByName(string name);
+    Task<ParkingGate?> FindByNameAsync(string name);
 }

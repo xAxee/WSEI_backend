@@ -29,10 +29,11 @@ public class MemoryParkingGateRepository : MemoryGenericRepository<ParkingGate>,
         _data.Add(secondGate.Id, secondGate);
     }
 
-    public ParkingGate GetParkingGateByName(string name)
+    public Task<ParkingGate?> FindByNameAsync(string name)
     {
-        return _data.Values.FirstOrDefault(g =>
-                   string.Equals(g.Name, name, StringComparison.OrdinalIgnoreCase))
-               ?? throw new KeyNotFoundException($"Nie znaleziono bramy parkingowej o nazwie '{name}'.");
+        var gate = _data.Values.FirstOrDefault(g =>
+            string.Equals(g.Name, name, StringComparison.OrdinalIgnoreCase));
+
+        return Task.FromResult(gate);
     }
 }
