@@ -20,7 +20,7 @@ public class GatesController(IParkingGateService service) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetGateById(Guid id)
+    public async Task<IActionResult> GetGate(Guid id)
     {
         var gate = await service.GetById(id);
         return gate is null ? NotFound() : Ok(gate);
@@ -41,14 +41,19 @@ public class GatesController(IParkingGateService service) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateGate([FromBody] CreateGateDto dto)
     {
+        var byName = await service.GetByName(dto.Name);
+        if (byName is not null)
+            return BadRequest("Nazwa jest zajeta.");
+        
         var createdGate = await service.Create(dto);
-        return CreatedAtAction(nameof(GetGateById), new { id = createdGate.Id }, createdGate);
+        return CreatedAtAction(nameof(GetGate), new { id = createdGate.Id }, createdGate);
     }
 
-    [HttpPatch("{id:guid}/operational-status")]
-    public async Task<IActionResult> ChangeOperationalStatus(Guid id, [FromQuery] bool isOperational)
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateGate(Guid id, [FromBody] UpdateGateDto dto)
     {
-        var updatedGate = await service.ChangeOperationalStatus(id, isOperational);
+        var updatedGate = await service.Update(id, dto);
         return updatedGate is null ? NotFound() : Ok(updatedGate);
     }
+    
 }

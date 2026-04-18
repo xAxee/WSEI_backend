@@ -45,6 +45,25 @@ public class MemoryParkingGateService(IParkingUnitOfWork unit) : IParkingGateSer
         return ParkingGateDto.FromEntity(created);
     }
 
+    public async Task<ParkingGateDto?> Update(Guid id, UpdateGateDto dto)
+    {
+        ArgumentNullException.ThrowIfNull(dto);
+
+        var entity = await unit.Gates.FindByIdAsync(id);
+        if (entity is null)
+        {
+            return null;
+        }
+
+        entity.Name = dto.Name;
+        entity.Type = dto.ToGateType();
+
+        await unit.Gates.UpdateAsync(entity);
+        await unit.SaveChangesAsync();
+
+        return ParkingGateDto.FromEntity(entity);
+    }
+
     public async Task<ParkingGateDto?> ChangeOperationalStatus(Guid id, bool isOperational)
     {
         var entity = await unit.Gates.FindByIdAsync(id);

@@ -1,6 +1,65 @@
-@WebApp_HostAddress = http://localhost:5153
+@ApiUrl = http://localhost:5153
+@GateId = 0349e001-57d0-4abf-86ea-c9575ea4ff34
+@GateName = Brama%20Poludniowa
 
-GET {{WebApp_HostAddress}}/weatherforecast/
+### 200 OK
+
+GET {{ApiUrl}}/api/gates?page=1&size=10
 Accept: application/json
 
-###
+### 200 OK
+
+GET {{ApiUrl}}/api/gates/{{GateId}}
+Accept: application/json
+
+### 404 Not Found
+
+GET {{ApiUrl}}/api/gates/75asdas7-14c8-4dbf-84a2-80cc22848edf
+Accept: application/json
+
+### 200 OK
+
+GET {{ApiUrl}}/api/gates/by-name/{{GateName}}
+Accept: application/json
+
+### 201 Created
+
+POST {{ApiUrl}}/api/gates
+Content-Type: application/json
+
+{
+  "name": "TEST",
+  "type": "Entry",
+  "location": "2-1"
+}
+
+### 400 Wrong Type
+
+POST {{ApiUrl}}/api/gates
+Content-Type: application/json
+
+{
+  "name": "",
+  "type": "WrongType",
+  "location": ""
+}
+
+### 200 OK
+
+PUT {{ApiUrl}}/api/gates/{{GateId}}
+Content-Type: application/json
+
+{
+  "name": "Brama A1",
+  "type": "Both"
+}
+
+### 400 Name
+
+PUT {{ApiUrl}}/api/gates/{{GateId}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "type": "Invalid"
+}

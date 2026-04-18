@@ -9,5 +9,6 @@ public interface IParkingGateService
     Task<ParkingGateDto?> GetById(Guid id);
     Task<ParkingGateDto?> GetByName(string name);
     Task<ParkingGateDto> Create(CreateGateDto dto);
+    Task<ParkingGateDto?> Update(Guid id, UpdateGateDto dto);
     Task<ParkingGateDto?> ChangeOperationalStatus(Guid id, bool isOperational);
 }

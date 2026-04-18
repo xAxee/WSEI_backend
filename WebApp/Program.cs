@@ -1,9 +1,11 @@
+using AppCore.Module;
 using AppCore.Repository;
 using AppCore.Services;
 using Infrastructure.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddValidators();
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
