@@ -17,6 +17,7 @@
 
 - `dotnet build backend.sln`
 - `dotnet test backend.sln`
+- Migracje: [wymagane / niewymagane]
 
 ## Commits
 
