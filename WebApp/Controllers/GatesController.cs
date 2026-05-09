@@ -1,4 +1,5 @@
 using AppCore.Dto;
+using AppCore.Repository;
 using AppCore.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,5 +56,47 @@ public class GatesController(IParkingGateService service) : ControllerBase
         var updatedGate = await service.Update(id, dto);
         return updatedGate is null ? NotFound() : Ok(updatedGate);
     }
-    
+
+    [HttpPost("{gateId:guid}/captures")]
+    [ProducesResponseType(typeof(CameraCaptureDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddCameraCapture(
+        [FromRoute] Guid gateId,
+        [FromBody] CreateCameraCaptureDto dto)
+    {
+        var capture = await service.AddCapture(gateId, dto);
+        return CreatedAtAction(
+            nameof(GetCaptures),
+            new { gateId, page = 1, size = 10 },
+            capture);
+    }
+
+    [HttpGet("{gateId:guid}/captures")]
+    [ProducesResponseType(typeof(PagedResult<CameraCaptureDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCaptures(
+        [FromRoute] Guid gateId,
+        [FromQuery] int page = 1,
+        [FromQuery] int size = 10)
+    {
+        if (page < 1 || size < 1)
+        {
+            return BadRequest("Parametry page i size muszą być większe od zera.");
+        }
+
+        var captures = await service.GetCaptures(gateId, page, size);
+        return Ok(captures);
+    }
+
+    [HttpDelete("{gateId:guid}/captures/{captureId:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteCapture([FromRoute] Guid gateId, [FromRoute] Guid captureId)
+    {
+        await service.DeleteCapture(gateId, captureId);
+        return NoContent();
+    }
 }

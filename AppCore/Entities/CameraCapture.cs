@@ -2,6 +2,7 @@ namespace AppCore.Entities;
 
 public class CameraCapture : EntityBase
 {
+    public Guid GateId { get; set; }
     public string GateName { get; set; }
     public string LicensePlate { get; set; }
     public string Detectedbrand { get; set; }

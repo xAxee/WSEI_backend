@@ -1,4 +1,5 @@
 using AppCore.Dto;
+using AppCore.Entities;
 using FluentValidation;
 
 namespace AppCore.Validators;
@@ -30,5 +31,10 @@ public class CameraCaptureDtoValidator : AbstractValidator<CameraCaptureDto>
         RuleFor(x => x.ImagePath)
             .MaximumLength(260).WithMessage("Ścieżka obrazu nie może przekraczać 260 znaków.")
             .When(x => !string.IsNullOrWhiteSpace(x.ImagePath));
+
+        RuleFor(x => x.Type)
+            .NotEmpty().WithMessage("Typ rejestracji jest wymagany.")
+            .Must(value => Enum.TryParse<CaptureType>(value, true, out _))
+            .WithMessage("Typ rejestracji musi mieć wartość Entry lub Exit.");
     }
 }

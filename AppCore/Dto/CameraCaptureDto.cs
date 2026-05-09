@@ -3,10 +3,14 @@ using AppCore.Entities;
 namespace AppCore.Dto;
 
 public record CameraCaptureDto(
+    Guid Id,
+    Guid GateId,
     string LicensePlate,
     string Brand,
     string Color,
     string GateName,
+    DateTime CapturedAt,
+    string Type,
     string? ImagePath = null)
 {
     public static CameraCaptureDto FromEntity(CameraCapture capture)
@@ -14,25 +18,37 @@ public record CameraCaptureDto(
         ArgumentNullException.ThrowIfNull(capture);
 
         return new CameraCaptureDto(
+            capture.Id,
+            capture.GateId,
             capture.LicensePlate,
             capture.Detectedbrand,
             capture.DetectedColor,
             capture.GateName,
+            capture.CapturedAt,
+            capture.Type.ToString(),
             string.IsNullOrWhiteSpace(capture.ImagePath) ? null : capture.ImagePath);
     }
 
-    public CameraCapture ToEntity(
-        Guid? id = null,
-        DateTime? capturedAt = null,
-        CaptureType type = CaptureType.Entry) => new()
+    public CameraCapture ToEntity() => new()
     {
-        Id = id ?? Guid.Empty,
+        Id = Id,
+        GateId = GateId,
         GateName = GateName,
         LicensePlate = LicensePlate,
         Detectedbrand = Brand,
         DetectedColor = Color,
-        CapturedAt = capturedAt ?? DateTime.UtcNow,
+        CapturedAt = CapturedAt,
         ImagePath = ImagePath ?? string.Empty,
-        Type = type
+        Type = ParseCaptureType(Type)
     };
+
+    private static CaptureType ParseCaptureType(string value)
+    {
+        if (Enum.TryParse<CaptureType>(value, true, out var captureType))
+        {
+            return captureType;
+        }
+
+        throw new ArgumentException($"Niepoprawny typ rejestracji: '{value}'.", nameof(value));
+    }
 }

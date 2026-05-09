@@ -91,9 +91,11 @@ public class DtoMappingTests
     public void CameraCaptureDto_Should_Map_Both_Ways()
     {
         var capturedAt = new DateTime(2026, 4, 18, 10, 15, 0, DateTimeKind.Utc);
+        var gateId = Guid.NewGuid();
         var capture = new CameraCapture
         {
             Id = Guid.NewGuid(),
+            GateId = gateId,
             GateName = "Entry Gate",
             LicensePlate = "KR12345",
             Detectedbrand = "Audi",
@@ -104,17 +106,22 @@ public class DtoMappingTests
         };
 
         var dto = CameraCaptureDto.FromEntity(capture);
-        var entity = dto.ToEntity(id: capture.Id, capturedAt: capture.CapturedAt, type: CaptureType.Exit);
+        var entity = dto.ToEntity();
 
+        Assert.Equal(capture.Id, dto.Id);
+        Assert.Equal(capture.GateId, dto.GateId);
         Assert.Equal(capture.LicensePlate, dto.LicensePlate);
         Assert.Equal(capture.Detectedbrand, dto.Brand);
         Assert.Equal(capture.DetectedColor, dto.Color);
+        Assert.Equal(capture.CapturedAt, dto.CapturedAt);
+        Assert.Equal("Entry", dto.Type);
         Assert.Equal(capture.ImagePath, dto.ImagePath);
 
         Assert.Equal(capture.Id, entity.Id);
+        Assert.Equal(capture.GateId, entity.GateId);
         Assert.Equal(dto.Brand, entity.Detectedbrand);
         Assert.Equal(dto.Color, entity.DetectedColor);
-        Assert.Equal(CaptureType.Exit, entity.Type);
+        Assert.Equal(CaptureType.Entry, entity.Type);
     }
 
     [Fact]

@@ -1,5 +1,7 @@
 @ApiUrl = http://localhost:5153
-@GateId = 0349e001-57d0-4abf-86ea-c9575ea4ff34
+@GateId = 3d54091d-abc8-49ec-9590-93ad3ed5458f
+@MissingGateId = 11111111-1111-1111-1111-111111111111
+@CaptureId = 22222222-2222-2222-2222-222222222222
 @GateName = Brama%20Poludniowa
 
 ### 200 OK
@@ -14,7 +16,7 @@ Accept: application/json
 
 ### 404 Not Found
 
-GET {{ApiUrl}}/api/gates/75asdas7-14c8-4dbf-84a2-80cc22848edf
+GET {{ApiUrl}}/api/gates/3d54091d-abc8-49ec-9590-93ad3ed54582
 Accept: application/json
 
 ### 200 OK
@@ -63,3 +65,39 @@ Content-Type: application/json
   "name": "",
   "type": "Invalid"
 }
+
+### 201 Created - add camera capture
+
+POST {{ApiUrl}}/api/gates/{{GateId}}/captures
+Content-Type: application/json
+
+{
+  "licensePlate": "KR12345",
+  "brand": "Audi",
+  "color": "Black",
+  "type": "Entry",
+  "imagePath": "captures/entry-1.jpg"
+}
+
+### 200 OK - get captures for gate
+
+GET {{ApiUrl}}/api/gates/{{GateId}}/captures?page=1&size=10
+Accept: application/json
+
+### 400 Bad Request - gate not found handled globally
+
+POST {{ApiUrl}}/api/gates/{{MissingGateId}}/captures
+Content-Type: application/json
+
+{
+  "licensePlate": "KR54321",
+  "brand": "BMW",
+  "color": "Blue",
+  "type": "Exit",
+  "imagePath": "captures/exit-1.jpg"
+}
+
+### 204 No Content - delete capture (replace CaptureId with value returned by POST/GET)
+
+DELETE {{ApiUrl}}/api/gates/{{GateId}}/captures/{{CaptureId}}
+Accept: application/json

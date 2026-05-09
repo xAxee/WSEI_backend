@@ -1,4 +1,5 @@
 using AppCore.Dto;
+using AppCore.Exceptions;
 using AppCore.Repository;
 using AppCore.Services;
 using Infrastructure.Memory;
@@ -14,7 +15,8 @@ public class MemoryParkingGateServiceTests
         var vehicles = new MemoryVehicleRepository();
         var sessions = new MemoryParkingSessionRepository();
         var gates = new MemoryParkingGateRepository();
-        var unitOfWork = new MemoryParkingUnitOfWork(vehicles, sessions, gates);
+        var captures = new MemoryCameraCaptureRepository();
+        var unitOfWork = new MemoryParkingUnitOfWork(vehicles, sessions, gates, captures);
 
         _service = new MemoryParkingGateService(unitOfWork);
     }
@@ -55,5 +57,49 @@ public class MemoryParkingGateServiceTests
 
         Assert.NotNull(updated);
         Assert.False(updated!.IsOperational);
+    }
+
+    [Fact]
+    public async Task AddCapture_ShouldAddCaptureToExistingGate()
+    {
+        var gate = (await _service.GetAllPaged(1, 10)).Items.First();
+
+        var created = await _service.AddCapture(gate.Id, new CreateCameraCaptureDto(
+            "KR12345",
+            "Audi",
+            "Black",
+            "Entry",
+            "captures/entry-1.jpg"));
+
+        var captures = await _service.GetCaptures(gate.Id, 1, 10);
+
+        Assert.Equal(gate.Id, created.GateId);
+        Assert.Equal(1, captures.TotalCount);
+        Assert.Single(captures.Items);
+    }
+
+    [Fact]
+    public async Task AddCapture_ShouldThrow_WhenGateDoesNotExist()
+    {
+        await Assert.ThrowsAsync<GateNotFoundException>(() => _service.AddCapture(
+            Guid.NewGuid(),
+            new CreateCameraCaptureDto("KR12345", "Audi", "Black", "Entry", "captures/entry-1.jpg")));
+    }
+
+    [Fact]
+    public async Task DeleteCapture_ShouldRemoveExistingCapture()
+    {
+        var gate = (await _service.GetAllPaged(1, 10)).Items.First();
+        var created = await _service.AddCapture(gate.Id, new CreateCameraCaptureDto(
+            "KR12345",
+            "Audi",
+            "Black",
+            "Entry",
+            "captures/entry-1.jpg"));
+
+        await _service.DeleteCapture(gate.Id, created.Id);
+        var captures = await _service.GetCaptures(gate.Id, 1, 10);
+
+        Assert.Empty(captures.Items);
     }
 }

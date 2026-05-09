@@ -12,6 +12,7 @@ public static class ValidatorsModule
         services.AddValidatorsFromAssemblyContaining<ParkingGateValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateTariffDtoValidator>();
         services.AddValidatorsFromAssemblyContaining<CameraCaptureDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateCameraCaptureDtoValidator>();
         services.AddValidatorsFromAssemblyContaining<UpdateGateDtoValidator>();
         
         services.AddFluentValidationAutoValidation();

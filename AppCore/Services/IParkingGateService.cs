@@ -11,4 +11,7 @@ public interface IParkingGateService
     Task<ParkingGateDto> Create(CreateGateDto dto);
     Task<ParkingGateDto?> Update(Guid id, UpdateGateDto dto);
     Task<ParkingGateDto?> ChangeOperationalStatus(Guid id, bool isOperational);
+    Task<CameraCaptureDto> AddCapture(Guid gateId, CreateCameraCaptureDto dto);
+    Task<PagedResult<CameraCaptureDto>> GetCaptures(Guid gateId, int page, int size);
+    Task DeleteCapture(Guid gateId, Guid captureId);
 }

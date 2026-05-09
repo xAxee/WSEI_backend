@@ -9,7 +9,7 @@ public class MemoryParkingGateRepository : MemoryGenericRepository<ParkingGate>,
     {
         var firstGate = new ParkingGate
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.Parse("3d54091d-abc8-49ec-9590-93ad3ed5458f"),
             Name = "Brama Polnocna",
             Type = GateType.Entry,
             Location = "Wjazd od ul. Glownej",
@@ -18,7 +18,7 @@ public class MemoryParkingGateRepository : MemoryGenericRepository<ParkingGate>,
 
         var secondGate = new ParkingGate
         {
-            Id = Guid.NewGuid(),
+            Id = Guid.Parse("0349e001-57d0-4abf-86ea-c9575ea4ff34"),
             Name = "Brama Poludniowa",
             Type = GateType.Exit,
             Location = "Wyjazd od ul. Parkowej",
